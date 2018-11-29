@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour {
@@ -37,12 +38,11 @@ public class PlayerController : MonoBehaviour {
 		
 	}
 
-	void getPath(){
+	IEnumerator getPath(){
 		line.SetPosition(0, transform.position); //set the line's origin
 
 		agent.SetDestination(target.position); //create the path
-		//yield WaitForEndOfFrame(); //wait for the path to generate
-
+	    yield return new WaitForEndOfFrame(); //wait for the path to generate
 
 		DrawPath(agent.path);
 
@@ -59,5 +59,19 @@ public class PlayerController : MonoBehaviour {
 			// line.SetPosition(i, path.corners[i]); //go through each corner and set that to the line renderer's position
 		//}
 		line.SetPositions(path.corners);
+		writePath(path.corners);
+	}
+
+	void writePath(Vector3[] pointsList) {
+
+		string filepath = "/home/prusswan/Projects/unity/test.csv";
+		System.IO.File.AppendAllText(filepath, "\nNew sequence:\n");
+
+		for(var i=0; i<pointsList.Length; i++) {
+			Vector3 point = pointsList[i];
+
+			UnityEngine.Debug.Log(point.ToString("R"));
+			System.IO.File.AppendAllText(filepath, point.ToString("R")+"\n");
+		}		
 	}
 }
